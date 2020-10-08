@@ -539,6 +539,28 @@ PYBIND11_MODULE(_bimpy, m) {
 		.value("AutoHideTabBar", ImGuiDockNodeFlags_AutoHideTabBar)
 		.export_values();
 
+	py::enum_<ImGuiTabBarFlags_>(m, "TabBar", py::arithmetic())
+		.value("Reorderable", ImGuiTabBarFlags_Reorderable)
+		.value("AutoSelectNewTabs", ImGuiTabBarFlags_AutoSelectNewTabs)
+		.value("TabListPopupButton", ImGuiTabBarFlags_TabListPopupButton)
+		.value("NoCloseWithMiddleMouseButton", ImGuiTabBarFlags_NoCloseWithMiddleMouseButton)
+		.value("NoTabListScrollingButtons", ImGuiTabBarFlags_NoTabListScrollingButtons)
+		.value("NoTooltip", ImGuiTabBarFlags_NoTooltip)
+		.value("FittingPolicyResizeDown", ImGuiTabBarFlags_FittingPolicyResizeDown)
+		.value("FittingPolicyScroll", ImGuiTabBarFlags_FittingPolicyScroll)
+		.export_values();
+
+	py::enum_<ImGuiTabItemFlags_>(m, "TabItem", py::arithmetic())
+		.value("UnsavedDocument", ImGuiTabItemFlags_UnsavedDocument)
+		.value("SetSelected", ImGuiTabItemFlags_SetSelected)
+		.value("NoCloseWithMiddleMouseButton", ImGuiTabItemFlags_NoCloseWithMiddleMouseButton)
+		.value("NoPushId", ImGuiTabItemFlags_NoPushId)
+		.value("NoTooltip", ImGuiTabItemFlags_NoTooltip)
+		.value("NoReorder", ImGuiTabItemFlags_NoReorder)
+		.value("Leading", ImGuiTabItemFlags_Leading)
+		.value("Trailing", ImGuiTabItemFlags_Trailing)
+		.export_values();
+
 	py::class_<Bool>(m, "Bool")
 		.def(py::init())
 		.def(py::init<bool>())
@@ -1413,4 +1435,15 @@ PYBIND11_MODULE(_bimpy, m) {
 		py::arg("id"), py::arg("size") = ImVec2(0, 0), py::arg("flags") = 0
 	);
 	m.def("is_window_docked", &ImGui::IsWindowDocked);
+
+	m.def("begin_tab_bar", &ImGui::BeginTabBar, py::arg("id"), py::arg("flags") = ImGuiTabBarFlags_(0));
+	m.def("end_tab_bar", &ImGui::EndTabBar);
+	m.def("begin_tab_item",
+		[](const std::string& label, Bool& opened, ImGuiTabItemFlags_ flags) { return ImGui::BeginTabItem(label.c_str(), opened.null ? nullptr : &opened.value, flags); },
+		py::arg("label"), py::arg("opened") = null, py::arg("flags") = ImGuiTabItemFlags_(0)
+	);
+	m.def("end_tab_item", &ImGui::EndTabItem);
+	m.def("tab_item_button", &ImGui::TabItemButton, py::arg("label"), py::arg("flags") = ImGuiTabItemFlags_(0));
+	m.def("set_tab_item_closed", &ImGui::SetTabItemClosed, py::arg("label"));
+
 }
