@@ -452,18 +452,6 @@ PYBIND11_MODULE(_bimpy, m) {
 		.value("NavWindowingHighlight", ImGuiCol_::ImGuiCol_NavWindowingHighlight)
 		.value("NavWindowingDimBg", ImGuiCol_::ImGuiCol_NavWindowingDimBg)
 		.value("ModalWindowDimBg", ImGuiCol_::ImGuiCol_ModalWindowDimBg)
-		// Obsolete names (will be removed)
-		.value("ChildWindowBg", ImGuiCol_::ImGuiCol_ChildWindowBg)
-		.value("Column", ImGuiCol_::ImGuiCol_Column)
-		.value("ColumnHovered", ImGuiCol_::ImGuiCol_ColumnHovered)
-		.value("ColumnActive", ImGuiCol_::ImGuiCol_ColumnActive)
-		.value("ModalWindowDarkening", ImGuiCol_::ImGuiCol_ModalWindowDarkening)
-		// [unused since 1.60+] the close button now uses regular button colors.
-		//.value("CloseButton", ImGuiCol_::ImGuiCol_CloseButton)
-		//.value("CloseButtonHovered", ImGuiCol_::ImGuiCol_CloseButtonHovered)
-		//.value("CloseButtonActive", ImGuiCol_::ImGuiCol_CloseButtonActive)
-		// [unused since 1.53+] ComboBg has been merged with PopupBg, so a redirect isn't accurate.
-		//.value("ComboBg", ImGuiCol_::ImGuiCol_ComboBg)
 		.export_values();
 
 	py::enum_<ImGuiStyleVar_>(m, "Style")
@@ -774,7 +762,6 @@ PYBIND11_MODULE(_bimpy, m) {
 	m.def("set_next_window_size", &ImGui::SetNextWindowSize, py::arg("size"), py::arg("cond") = 0);
 	m.def("set_next_window_size_constraints", [](const ImVec2& size_min, const ImVec2& size_max){ ImGui::SetNextWindowSizeConstraints(size_min, size_max); }, py::arg("size_min"), py::arg("size_max") = 0);
 	m.def("set_next_window_content_size", &ImGui::SetNextWindowContentSize, py::arg("size"));
-	m.def("set_next_window_content_width", &ImGui::SetNextWindowContentWidth, py::arg("width"));
 	m.def("set_next_window_collapsed", &ImGui::SetNextWindowCollapsed, py::arg("collapsed"), py::arg("cond") = 0);
 	m.def("set_next_window_focus", &ImGui::SetNextWindowFocus);
 	m.def("set_window_pos", [](const char* name, const ImVec2& pos, ImGuiCond cond){ ImGui::SetWindowPos(name, pos, cond); }, py::arg("name"), py::arg("pos"), py::arg("cond") = 0);
@@ -786,10 +773,18 @@ PYBIND11_MODULE(_bimpy, m) {
 	m.def("get_scroll_y", &ImGui::GetScrollY);
 	m.def("get_scroll_max_x", &ImGui::GetScrollMaxX);
 	m.def("get_scroll_max_y", &ImGui::GetScrollMaxY);
-	m.def("set_scroll_x", &ImGui::SetScrollX);
-	m.def("set_scroll_y", &ImGui::SetScrollY);
-	m.def("set_scroll_here", &ImGui::SetScrollHere, py::arg("center_y_ratio") = 0.5f);
-	m.def("set_scroll_from_pos_y", &ImGui::SetScrollFromPosY, py::arg("pos_y"), py::arg("center_y_ratio") = 0.5f);
+	m.def("set_scroll_x", [](float scroll_x) { ImGui::SetScrollX(scroll_x); }, py::arg("scroll_x"));
+	m.def("set_scroll_y", [](float scroll_y) { ImGui::SetScrollX(scroll_y); }, py::arg("scroll_y"));
+	m.def("set_scroll_here_x", [](float center_x_ratio) { ImGui::SetScrollHereX(center_x_ratio); }, py::arg("center_x_ratio") = 0.5f);
+	m.def("set_scroll_here_y", [](float center_y_ratio) { ImGui::SetScrollHereY(center_y_ratio); }, py::arg("center_y_ratio") = 0.5f);
+	m.def("set_scroll_from_pos_x",
+		[](float local_x, float center_x_ratio) { ImGui::SetScrollFromPosX(local_x, center_x_ratio); },
+		py::arg("local_x"), py::arg("center_x_ratio") = 0.5f
+	);
+	m.def("set_scroll_from_pos_y",
+		[](float local_y, float center_y_ratio) { ImGui::SetScrollFromPosY(local_y, center_y_ratio); },
+		py::arg("local_y"), py::arg("center_y_ratio") = 0.5f
+	);
 	m.def("set_keyboard_focus_here", &ImGui::SetKeyboardFocusHere, py::arg("offset") = 0.0f);
 
 	m.def("push_style_color", [](ImGuiCol_ idx, const ImVec4& col){ ImGui::PushStyleColor((ImGuiCol)idx, col); });
@@ -829,10 +824,8 @@ PYBIND11_MODULE(_bimpy, m) {
 	m.def("get_cursor_start_pos", &ImGui::GetCursorStartPos);
 	m.def("get_cursor_screen_pos", &ImGui::GetCursorScreenPos);
 	m.def("set_cursor_screen_pos", &ImGui::SetCursorScreenPos);
-	m.def("align_first_text_height_to_widgets", &ImGui::AlignFirstTextHeightToWidgets);
 	m.def("get_text_line_height", &ImGui::GetTextLineHeight);
 	m.def("get_text_line_height_with_spacing", &ImGui::GetTextLineHeightWithSpacing);
-	m.def("get_items_line_height_with_spacing", &ImGui::GetItemsLineHeightWithSpacing);
 
 	m.def("columns", &ImGui::Columns, py::arg("count") = 1, py::arg("id") = nullptr, py::arg("border") = true);
 	m.def("next_column", &ImGui::NextColumn);
