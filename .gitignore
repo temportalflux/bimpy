@@ -77,3 +77,4 @@ venv.bak/
 build/
 *.egg-info/
 cmake-build-debug/
+.vs
