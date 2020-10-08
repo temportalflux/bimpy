@@ -85,6 +85,9 @@ void Context::Init(int width, int height, const std::string& name)
 		m_imgui = ImGui::CreateContext();
 		GImGui = m_imgui;
 
+		ImGuiIO& io = ImGui::GetIO();
+		io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
+
 		ImGui_ImplGlfw_InitForOpenGL(m_window, false);
 		ImGui_ImplOpenGL3_Init(glsl_version);
 		glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
@@ -374,10 +377,9 @@ PYBIND11_MODULE(_bimpy, m) {
 		.value("NoScrollWithMouse", ImGuiWindowFlags_::ImGuiWindowFlags_NoScrollWithMouse)
 		.value("NoCollapse", ImGuiWindowFlags_::ImGuiWindowFlags_NoCollapse)
 		.value("AlwaysAutoResize", ImGuiWindowFlags_::ImGuiWindowFlags_AlwaysAutoResize)
-		// obsolete --> Set style.FrameBorderSize=1.0f / style.WindowBorderSize=1.0f to enable borders around windows and items
-		// .value("ShowBorders", ImGuiWindowFlags_::ImGuiWindowFlags_ShowBorders)
+		.value("NoBackground", ImGuiWindowFlags_::ImGuiWindowFlags_NoBackground)
 		.value("NoSavedSettings", ImGuiWindowFlags_::ImGuiWindowFlags_NoSavedSettings)
-		.value("NoInputs", ImGuiWindowFlags_::ImGuiWindowFlags_NoInputs)
+		.value("NoMouseInputs", ImGuiWindowFlags_::ImGuiWindowFlags_NoMouseInputs)
 		.value("MenuBar", ImGuiWindowFlags_::ImGuiWindowFlags_MenuBar)
 		.value("HorizontalScrollbar", ImGuiWindowFlags_::ImGuiWindowFlags_HorizontalScrollbar)
 		.value("NoFocusOnAppearing", ImGuiWindowFlags_::ImGuiWindowFlags_NoFocusOnAppearing)
@@ -385,6 +387,13 @@ PYBIND11_MODULE(_bimpy, m) {
 		.value("AlwaysVerticalScrollbar", ImGuiWindowFlags_::ImGuiWindowFlags_AlwaysVerticalScrollbar)
 		.value("AlwaysHorizontalScrollbar", ImGuiWindowFlags_::ImGuiWindowFlags_AlwaysHorizontalScrollbar)
 		.value("AlwaysUseWindowPadding", ImGuiWindowFlags_::ImGuiWindowFlags_AlwaysUseWindowPadding)
+		.value("NoNavInputs", ImGuiWindowFlags_::ImGuiWindowFlags_NoNavInputs)
+		.value("NoNavFocus", ImGuiWindowFlags_::ImGuiWindowFlags_NoNavFocus)
+		.value("UnsavedDocument", ImGuiWindowFlags_::ImGuiWindowFlags_UnsavedDocument)
+		.value("NoDocking", ImGuiWindowFlags_::ImGuiWindowFlags_NoDocking)
+		.value("NoNav", ImGuiWindowFlags_::ImGuiWindowFlags_NoNav)
+		.value("NoDecoration", ImGuiWindowFlags_::ImGuiWindowFlags_NoDecoration)
+		.value("NoInputs", ImGuiWindowFlags_::ImGuiWindowFlags_NoInputs)
 		.export_values();
 
 	py::enum_<ImGuiInputTextFlags_>(m, "InputTextFlags", py::arithmetic())
@@ -511,7 +520,7 @@ PYBIND11_MODULE(_bimpy, m) {
 		.def("__exit__", [](Context& self, py::object, py::object, py::object)
 			{
 				self.Render();
-			});
+	});
 
 	py::enum_<ImDrawCornerFlags_>(m, "Corner")
 		.value("TopLeft", ImDrawCornerFlags_TopLeft)
@@ -519,6 +528,15 @@ PYBIND11_MODULE(_bimpy, m) {
 		.value("BotRight", ImDrawCornerFlags_BotRight)
 		.value("BotLeft", ImDrawCornerFlags_BotLeft)
 		.value("All", ImDrawCornerFlags_All)
+		.export_values();
+
+	py::enum_<ImGuiDockNodeFlags_>(m, "DockNode", py::arithmetic())
+		.value("KeepAliveOnly", ImGuiDockNodeFlags_KeepAliveOnly)
+		.value("NoDockingInCentralNode", ImGuiDockNodeFlags_NoDockingInCentralNode)
+		.value("PassthruCentralNode", ImGuiDockNodeFlags_PassthruCentralNode)
+		.value("NoSplit", ImGuiDockNodeFlags_NoSplit)
+		.value("NoResize", ImGuiDockNodeFlags_NoResize)
+		.value("AutoHideTabBar", ImGuiDockNodeFlags_AutoHideTabBar)
 		.export_values();
 
 	py::class_<Bool>(m, "Bool")
@@ -746,6 +764,8 @@ PYBIND11_MODULE(_bimpy, m) {
 	m.def("get_window_content_region_width", &ImGui::GetWindowContentRegionWidth);
 	// m.def("get_window_font_size", &ImGui::GetWindowFontSize);
 	m.def("get_font_size", &ImGui::GetFontSize);
+	m.def("get_viewport_pos", []() { return ImGui::GetMainViewport()->GetWorkPos(); });
+	m.def("get_viewport_size", []() { return ImGui::GetMainViewport()->GetWorkSize(); });
 	m.def("set_window_font_scale", &ImGui::SetWindowFontScale);
 	m.def("get_window_pos", &ImGui::GetWindowPos);
 	m.def("get_window_size", &ImGui::GetWindowSize);
@@ -1387,4 +1407,10 @@ PYBIND11_MODULE(_bimpy, m) {
 	m.attr("key_right_control") = py::int_(GLFW_KEY_RIGHT_CONTROL);
 	m.attr("key_right_alt") = py::int_(GLFW_KEY_RIGHT_ALT);
 	m.attr("key_right_super") = py::int_(GLFW_KEY_RIGHT_SUPER);
+
+	m.def("DockSpace", 
+		[](const char* id, const ImVec2& size, ImGuiDockNodeFlags flags) { ImGui::DockSpace(ImGui::GetID(id), size, flags); },
+		py::arg("id"), py::arg("size") = ImVec2(0, 0), py::arg("flags") = 0
+	);
+	m.def("is_window_docked", &ImGui::IsWindowDocked);
 }
