@@ -1267,7 +1267,7 @@ PYBIND11_MODULE(_bimpy, m) {
 	m.def("set_item_default_focus", &ImGui::SetItemDefaultFocus);
 	m.def("set_keyboard_focus_here", &ImGui::SetKeyboardFocusHere);
 
-	m.def("is_item_hovered", &ImGui::IsItemHovered);
+	m.def("is_item_hovered", &ImGui::IsItemHovered, py::arg("flags") = ImGuiHoveredFlags_(0));
 	m.def("is_item_active", &ImGui::IsItemActive);
 	m.def("is_item_focused", &ImGui::IsItemFocused);
 	m.def("is_item_clicked", &ImGui::IsItemClicked);
