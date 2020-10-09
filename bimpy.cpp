@@ -614,6 +614,14 @@ PYBIND11_MODULE(_bimpy, m) {
 			.def_readonly("width", &Image::m_width)
 			.def_readonly("height", &Image::m_height);
 
+	py::class_<ImGuiListClipper>(m, "ListClipper")
+		.def(py::init())
+		.def("begin", &ImGuiListClipper::Begin, py::arg("items_count"), py::arg("items_height") = -1.0f)
+		.def("end", &ImGuiListClipper::End)
+		.def("step", &ImGuiListClipper::Step)
+		.def_readonly("displayStart", &ImGuiListClipper::DisplayStart)
+		.def_readonly("displayEnd", &ImGuiListClipper::DisplayEnd);
+
 	py::class_<ImGuiStyle>(m, "GuiStyle")
 		.def(py::init())
 			.def_readwrite("alpha", &ImGuiStyle::Alpha)
