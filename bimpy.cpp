@@ -338,6 +338,273 @@ private:
 	GLuint m_textureHandle;
 };
 
+enum class KeyModifier
+{
+	Ctrl = 1 << 0,
+	Shift = 1 << 1,
+	Alt = 1 << 2,
+	Super = 1 << 3,
+};
+
+bool isUsingModifierMask(KeyModifier modifier, KeyModifier mask)
+{
+	return (((int)mask & (int)modifier) == (int)modifier);
+}
+
+bool isMaskActive(KeyModifier mask)
+{
+	ImGuiIO& io = ImGui::GetIO();
+	return (
+		(!isUsingModifierMask(KeyModifier::Ctrl, mask) || io.KeyCtrl)
+		&& (!isUsingModifierMask(KeyModifier::Alt, mask) || io.KeyAlt)
+		&& (!isUsingModifierMask(KeyModifier::Shift, mask) || io.KeyShift)
+		&& (!isUsingModifierMask(KeyModifier::Super, mask) || io.KeySuper)
+	);
+}
+
+enum class Key
+{
+	/* Printable keys */
+	SPACE              =32,
+	APOSTROPHE         =39,  /* ' */
+	COMMA              =44,  /* , */
+	MINUS              =45,  /* - */
+	PERIOD             =46,  /* . */
+	SLASH              =47,  /* / */
+	NUM_0 = 48,
+	NUM_1 = 49,
+	NUM_2 = 50,
+	NUM_3 = 51,
+	NUM_4 = 52,
+	NUM_5 = 53,
+	NUM_6 = 54,
+	NUM_7 = 55,
+	NUM_8 = 56,
+	NUM_9 = 57,
+	SEMICOLON          =59,  /* ; */
+	EQUAL              =61,  /* = */
+	A                  =65,
+	B                  =66,
+	C                  =67,
+	D                  =68,
+	E                  =69,
+	F                  =70,
+	G                  =71,
+	H                  =72,
+	I                  =73,
+	J                  =74,
+	K                  =75,
+	L                  =76,
+	M                  =77,
+	N                  =78,
+	O                  =79,
+	P                  =80,
+	Q                  =81,
+	R                  =82,
+	S                  =83,
+	T                  =84,
+	U                  =85,
+	V                  =86,
+	W                  =87,
+	X                  =88,
+	Y                  =89,
+	Z                  =90,
+	LEFT_BRACKET       =91,  /* [ */
+	BACKSLASH          =92,  /* \ */
+	RIGHT_BRACKET      =93,  /* ] */
+	GRAVE_ACCENT       =96,  /* ` */
+	WORLD_1 = 161, /* non-US #1 */
+	WORLD_2 = 162, /* non-US #2 */
+
+/* Function keys */
+	ESCAPE             =256,
+	ENTER              =257,
+	TAB                =258,
+	BACKSPACE          =259,
+	INSERT             =260,
+	DELETE_            =261,
+	RIGHT              =262,
+	LEFT               =263,
+	DOWN               =264,
+	UP                 =265,
+	PAGE_UP            =266,
+	PAGE_DOWN          =267,
+	HOME               =268,
+	END                =269,
+	/*
+	CAPS_LOCK          =280,
+	SCROLL_LOCK        =281,
+	NUM_LOCK           =282,
+	PRINT_SCREEN       =283,
+	PAUSE              =284,
+	*/
+	F1                 =290,
+	F2                 =291,
+	F3                 =292,
+	F4                 =293,
+	F5                 =294,
+	F6                 =295,
+	F7                 =296,
+	F8                 =297,
+	F9                 =298,
+	F10                =299,
+	F11                =300,
+	F12                =301,
+	F13                =302,
+	F14                =303,
+	F15                =304,
+	F16                =305,
+	F17                =306,
+	F18                =307,
+	F19                =308,
+	F20                =309,
+	F21                =310,
+	F22                =311,
+	F23                =312,
+	F24                =313,
+	F25                =314,
+	KP_0               =320,
+	KP_1               =321,
+	KP_2               =322,
+	KP_3               =323,
+	KP_4               =324,
+	KP_5               =325,
+	KP_6               =326,
+	KP_7               =327,
+	KP_8               =328,
+	KP_9               =329,
+	KP_DECIMAL         =330,
+	KP_DIVIDE          =331,
+	KP_MULTIPLY        =332,
+	KP_SUBTRACT        =333,
+	KP_ADD             =334,
+	KP_ENTER           =335,
+	KP_EQUAL           =336,
+};
+
+std::string getKeyLabel(Key key)
+{
+	switch (key)
+	{
+		/* Printable keys */
+		case Key::SPACE: return "SPACE";
+		case Key::APOSTROPHE: return "'";
+		case Key::COMMA: return ",";
+		case Key::MINUS: return "-";
+		case Key::PERIOD: return ".";
+		case Key::SLASH: return "/";
+		case Key::NUM_0: return "0";
+		case Key::NUM_1: return "1";
+		case Key::NUM_2: return "2";
+		case Key::NUM_3: return "3";
+		case Key::NUM_4: return "4";
+		case Key::NUM_5: return "5";
+		case Key::NUM_6: return "6";
+		case Key::NUM_7: return "7";
+		case Key::NUM_8: return "8";
+		case Key::NUM_9: return "9";
+		case Key::SEMICOLON: return ";";
+		case Key::EQUAL: return "=";
+		case Key::A: return "A";
+		case Key::B: return "B";
+		case Key::C: return "C";
+		case Key::D: return "D";
+		case Key::E: return "E";
+		case Key::F: return "F";
+		case Key::G: return "G";
+		case Key::H: return "H";
+		case Key::I: return "I";
+		case Key::J: return "J";
+		case Key::K: return "K";
+		case Key::L: return "L";
+		case Key::M: return "M";
+		case Key::N: return "N";
+		case Key::O: return "O";
+		case Key::P: return "P";
+		case Key::Q: return "Q";
+		case Key::R: return "R";
+		case Key::S: return "S";
+		case Key::T: return "T";
+		case Key::U: return "U";
+		case Key::V: return "V";
+		case Key::W: return "W";
+		case Key::X: return "X";
+		case Key::Y: return "Y";
+		case Key::Z: return "Z";
+		case Key::LEFT_BRACKET: return "[";
+		case Key::BACKSLASH: return "\\";
+		case Key::RIGHT_BRACKET: return "]";
+		case Key::GRAVE_ACCENT: return "`";
+		case Key::WORLD_1: return "World1";
+		case Key::WORLD_2: return "World2";
+
+		/* Function keys */
+		case Key::ESCAPE: return "Escape";
+		case Key::ENTER: return "Enter";
+		case Key::TAB: return "Tab";
+		case Key::BACKSPACE: return "Backspace";
+		case Key::INSERT: return "Insert";
+		case Key::DELETE_: return "Delete";
+		case Key::RIGHT: return "Right Arrow";
+		case Key::LEFT: return "Left Arrow";
+		case Key::DOWN: return "Down Arrow";
+		case Key::UP: return "Up Arrow";
+		case Key::PAGE_UP: return "Page Up";
+		case Key::PAGE_DOWN: return "Page Down";
+		case Key::HOME: return "Home";
+		case Key::END: return "End";
+		/*
+		case CAPS_LOCK: return "Caps Lock";
+		case SCROLL_LOCK: return "Scroll Lock";
+		case NUM_LOCK: return "Num Lock";
+		case PRINT_SCREEN: return "Print Screen";
+		case PAUSE: return "Pause";
+		*/
+		case Key::F1: return "F1";
+		case Key::F2: return "F2";
+		case Key::F3: return "F3";
+		case Key::F4: return "F4";
+		case Key::F5: return "F5";
+		case Key::F6: return "F6";
+		case Key::F7: return "F7";
+		case Key::F8: return "F8";
+		case Key::F9: return "F9";
+		case Key::F10: return "F10";
+		case Key::F11: return "F11";
+		case Key::F12: return "F12";
+		case Key::F13: return "F13";
+		case Key::F14: return "F14";
+		case Key::F15: return "F15";
+		case Key::F16: return "F16";
+		case Key::F17: return "F17";
+		case Key::F18: return "F18";
+		case Key::F19: return "F19";
+		case Key::F20: return "F20";
+		case Key::F21: return "F21";
+		case Key::F22: return "F22";
+		case Key::F23: return "F23";
+		case Key::F24: return "F24";
+		case Key::F25: return "F25";
+		case Key::KP_0: return "0 (KeyPad)";
+		case Key::KP_1: return "1 (KeyPad)";
+		case Key::KP_2: return "2 (KeyPad)";
+		case Key::KP_3: return "3 (KeyPad)";
+		case Key::KP_4: return "4 (KeyPad)";
+		case Key::KP_5: return "5 (KeyPad)";
+		case Key::KP_6: return "6 (KeyPad)";
+		case Key::KP_7: return "7 (KeyPad)";
+		case Key::KP_8: return "8 (KeyPad)";
+		case Key::KP_9: return "9 (KeyPad)";
+		case Key::KP_DECIMAL: return ". (KeyPad)";
+		case Key::KP_DIVIDE: return "/ (KeyPad)";
+		case Key::KP_MULTIPLY: return "* (KeyPad)";
+		case Key::KP_SUBTRACT: return "- (KeyPad)";
+		case Key::KP_ADD: return "+ (KeyPad)";
+		case Key::KP_ENTER: return "Enter (KeyPad)";
+		case Key::KP_EQUAL: return "= (KeyPad)";
+		default: return "unknown";
+	}
+}
 
 void  AddLine(const ImVec2& a, const ImVec2& b, ImU32 col, float thickness){ ImGui::GetWindowDrawList()->AddLine(a, b, col, thickness); }
 void  AddRect(const ImVec2& a, const ImVec2& b, ImU32 col, float rounding, int rounding_corners_flags, float thickness){ ImGui::GetWindowDrawList()->AddRect(a, b, col, rounding, rounding_corners_flags, thickness); }
@@ -489,7 +756,7 @@ PYBIND11_MODULE(_bimpy, m) {
 		.export_values();
 
 		py::enum_<ImGuiFocusedFlags_>(m,"FocusedFlags")
-			.value("None", ImGuiFocusedFlags_None)
+			.value("Current", ImGuiFocusedFlags_None)
 			.value("ChildWindows", ImGuiFocusedFlags_ChildWindows)
 			.value("RootWindow", ImGuiFocusedFlags_RootWindow)
 			.value("AnyWindow", ImGuiFocusedFlags_AnyWindow)
@@ -521,6 +788,131 @@ PYBIND11_MODULE(_bimpy, m) {
 			{
 				self.Render();
 	});
+
+	py::enum_<KeyModifier>(m, "KeyModifier", py::arithmetic())
+		.value("Ctrl", KeyModifier::Ctrl)
+		.value("Shift", KeyModifier::Shift)
+		.value("Alt", KeyModifier::Alt)
+		.value("Super", KeyModifier::Super)
+		.export_values();
+
+	py::enum_<Key>(m, "Key")
+		/* Printable keys */
+		.value("SPACE", Key::SPACE)
+		.value("APOSTROPHE", Key::APOSTROPHE)
+		.value("COMMA", Key::COMMA)
+		.value("MINUS", Key::MINUS)
+		.value("PERIOD", Key::PERIOD)
+		.value("SLASH", Key::SLASH)
+		.value("NUM_0", Key::NUM_0)
+		.value("NUM_1", Key::NUM_1)
+		.value("NUM_2", Key::NUM_2)
+		.value("NUM_3", Key::NUM_3)
+		.value("NUM_4", Key::NUM_4)
+		.value("NUM_5", Key::NUM_5)
+		.value("NUM_6", Key::NUM_6)
+		.value("NUM_7", Key::NUM_7)
+		.value("NUM_8", Key::NUM_8)
+		.value("NUM_9", Key::NUM_9)
+		.value("SEMICOLON", Key::SEMICOLON)
+		.value("EQUAL", Key::EQUAL)
+		.value("A", Key::A)
+		.value("B", Key::B)
+		.value("C", Key::C)
+		.value("D", Key::D)
+		.value("E", Key::E)
+		.value("F", Key::F)
+		.value("G", Key::G)
+		.value("H", Key::H)
+		.value("I", Key::I)
+		.value("J", Key::J)
+		.value("K", Key::K)
+		.value("L", Key::L)
+		.value("M", Key::M)
+		.value("N", Key::N)
+		.value("O", Key::O)
+		.value("P", Key::P)
+		.value("Q", Key::Q)
+		.value("R", Key::R)
+		.value("S", Key::S)
+		.value("T", Key::T)
+		.value("U", Key::U)
+		.value("V", Key::V)
+		.value("W", Key::W)
+		.value("X", Key::X)
+		.value("Y", Key::Y)
+		.value("Z", Key::Z)
+		.value("LEFT_BRACKET", Key::LEFT_BRACKET)
+		.value("BACKSLASH", Key::BACKSLASH)
+		.value("RIGHT_BRACKET", Key::RIGHT_BRACKET)
+		.value("GRAVE_ACCENT", Key::GRAVE_ACCENT)
+		.value("WORLD_1", Key::WORLD_1)
+		.value("WORLD_2", Key::WORLD_2)
+		/* Function keys */
+		.value("ESCAPE", Key::ESCAPE)
+		.value("ENTER", Key::ENTER)
+		.value("TAB", Key::TAB)
+		.value("BACKSPACE", Key::BACKSPACE)
+		.value("INSERT", Key::INSERT)
+		.value("DELETE", Key::DELETE_)
+		.value("RIGHT", Key::RIGHT)
+		.value("LEFT", Key::LEFT)
+		.value("DOWN", Key::DOWN)
+		.value("UP", Key::UP)
+		.value("PAGE_UP", Key::PAGE_UP)
+		.value("PAGE_DOWN", Key::PAGE_DOWN)
+		.value("HOME", Key::HOME)
+		.value("END", Key::END)
+		/*
+		.value("CAPS_LOCK", Key::CAPS_LOCK)
+		.value("SCROLL_LOCK", Key::SCROLL_LOCK)
+		.value("NUM_LOCK", Key::NUM_LOCK)
+		.value("PRINT_SCREEN", Key::PRINT_SCREEN)
+		.value("PAUSE", Key::PAUSE)
+		*/
+		.value("F1", Key::F1)
+		.value("F2", Key::F2)
+		.value("F3", Key::F3)
+		.value("F4", Key::F4)
+		.value("F5", Key::F5)
+		.value("F6", Key::F6)
+		.value("F7", Key::F7)
+		.value("F8", Key::F8)
+		.value("F9", Key::F9)
+		.value("F10", Key::F10)
+		.value("F11", Key::F11)
+		.value("F12", Key::F12)
+		.value("F13", Key::F13)
+		.value("F14", Key::F14)
+		.value("F15", Key::F15)
+		.value("F16", Key::F16)
+		.value("F17", Key::F17)
+		.value("F18", Key::F18)
+		.value("F19", Key::F19)
+		.value("F20", Key::F20)
+		.value("F21", Key::F21)
+		.value("F22", Key::F22)
+		.value("F23", Key::F23)
+		.value("F24", Key::F24)
+		.value("F25", Key::F25)
+		.value("KP_0", Key::KP_0)
+		.value("KP_1", Key::KP_1)
+		.value("KP_2", Key::KP_2)
+		.value("KP_3", Key::KP_3)
+		.value("KP_4", Key::KP_4)
+		.value("KP_5", Key::KP_5)
+		.value("KP_6", Key::KP_6)
+		.value("KP_7", Key::KP_7)
+		.value("KP_8", Key::KP_8)
+		.value("KP_9", Key::KP_9)
+		.value("KP_DECIMAL", Key::KP_DECIMAL)
+		.value("KP_DIVIDE", Key::KP_DIVIDE)
+		.value("KP_MULTIPLY", Key::KP_MULTIPLY)
+		.value("KP_SUBTRACT", Key::KP_SUBTRACT)
+		.value("KP_ADD", Key::KP_ADD)
+		.value("KP_ENTER", Key::KP_ENTER)
+		.value("KP_EQUAL", Key::KP_EQUAL)
+		.export_values();
 
 	py::enum_<ImDrawCornerFlags_>(m, "Corner")
 		.value("TopLeft", ImDrawCornerFlags_TopLeft)
@@ -718,12 +1110,45 @@ PYBIND11_MODULE(_bimpy, m) {
 		},
 		"create a sub-menu entry. only call EndMenu() if this returns true!",
 		py::arg("name"), py::arg("enabled") = Bool(true));
-	m.def("menu_item",[](const std::string& label, const std::string& shortcut, Bool& selected, bool enabled) -> bool
+	m.def(
+		"menu_item",
+		[](
+			const std::string& label,
+			const Key& shortcut_key, const KeyModifier& shortcut_modifier,
+			Bool& selected, bool enabled
+		) -> bool
 		{
-			return ImGui::MenuItem(label.c_str(), shortcut.c_str(), selected.null ? nullptr : &selected.value, enabled);
+			std::string shortcutDescriptor = "";
+			auto pushDescriptor = [&shortcutDescriptor](const std::string& d)
+			{
+				if (shortcutDescriptor.length() > 0)
+					shortcutDescriptor += '+';
+				shortcutDescriptor += d;
+			};
+			if (isUsingModifierMask(KeyModifier::Ctrl, shortcut_modifier)) pushDescriptor("Ctrl");
+			if (isUsingModifierMask(KeyModifier::Alt, shortcut_modifier)) pushDescriptor("Alt");
+			if (isUsingModifierMask(KeyModifier::Shift, shortcut_modifier)) pushDescriptor("Shift");
+			if (isUsingModifierMask(KeyModifier::Super, shortcut_modifier))
+			{
+				#if _WIN32
+				pushDescriptor("Win");
+				#elif __APPLE__
+				pushDescriptor("Mac");
+				#else
+				pushDescriptor("Super");
+				#endif
+			}
+			if ((int)shortcut_key != -1)
+			{
+				pushDescriptor(getKeyLabel(shortcut_key));
+			}
+			return ImGui::MenuItem(label.c_str(), shortcutDescriptor.c_str(), selected.null ? nullptr : &selected.value, enabled);
 		},
 		"return true when activated + toggle (*p_selected) if p_selected != NULL",
-		py::arg("name"), py::arg("shortcut"), py::arg("selected") = Bool(false), py::arg("enabled") = true);
+		py::arg("name"),
+		py::arg("shortcut_key") = Key(-1), py::arg("shortcut_modifier") = KeyModifier(0),
+		py::arg("selected") = Bool(false), py::arg("enabled") = true
+	);
 	m.def("end_menu", &ImGui::EndMenu);
 
 	m.def("begin_tooltip", &ImGui::BeginTooltip);
@@ -1296,10 +1721,21 @@ PYBIND11_MODULE(_bimpy, m) {
 	m.def("get_time", &ImGui::GetTime);
 	m.def("get_frame_count", &ImGui::GetFrameCount);
 
-	m.def("get_key_index", &ImGui::GetKeyIndex);
-	m.def("is_key_down", &ImGui::IsKeyDown);
-	m.def("is_key_pressed", &ImGui::IsKeyPressed);
-	m.def("is_key_released", &ImGui::IsKeyReleased);
+	m.def(
+		"is_key_down",
+		[](Key key, KeyModifier mask) { return ImGui::IsKeyDown((int)key) && isMaskActive(mask); },
+		py::arg("key"), py::arg("modifiers") = KeyModifier(0)
+	);
+	m.def(
+		"is_key_pressed",
+		[](Key key, KeyModifier mask, bool repeat) { return isMaskActive(mask) ? ImGui::IsKeyPressed((int)key, repeat) : false; },
+		py::arg("key"), py::arg("modifiers") = KeyModifier(0), py::arg("repeat") = true
+	);
+	m.def(
+		"is_key_released",
+		[](Key key, KeyModifier mask) { return !isMaskActive(mask) || ImGui::IsKeyReleased((int)key); },
+		py::arg("key"), py::arg("modifiers") = KeyModifier(0)
+	);
 	m.def("get_key_pressed_amount", &ImGui::GetKeyPressedAmount);
 	m.def("is_mouse_down", &ImGui::IsMouseDown);
 	m.def("is_any_mouse_down", &ImGui::IsAnyMouseDown);
