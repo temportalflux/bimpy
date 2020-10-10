@@ -87,6 +87,15 @@ void Context::Init(int width, int height, const std::string& name)
 
 		ImGuiIO& io = ImGui::GetIO();
 		io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
+		io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
+		io.KeyMap[ImGuiKey_Tab] = GLFW_KEY_TAB;
+		io.KeyMap[ImGuiKey_LeftArrow] = GLFW_KEY_LEFT;
+		io.KeyMap[ImGuiKey_RightArrow] = GLFW_KEY_RIGHT;
+		io.KeyMap[ImGuiKey_UpArrow] = GLFW_KEY_UP;
+		io.KeyMap[ImGuiKey_DownArrow] = GLFW_KEY_DOWN;
+		io.KeyMap[ImGuiKey_Space] = GLFW_KEY_SPACE;
+		io.KeyMap[ImGuiKey_Enter] = GLFW_KEY_ENTER;
+		io.KeyMap[ImGuiKey_Escape] = GLFW_KEY_ESCAPE;
 
 		ImGui_ImplGlfw_InitForOpenGL(m_window, false);
 		ImGui_ImplOpenGL3_Init(glsl_version);
@@ -951,6 +960,15 @@ PYBIND11_MODULE(_bimpy, m) {
 		.value("NoReorder", ImGuiTabItemFlags_NoReorder)
 		.value("Leading", ImGuiTabItemFlags_Leading)
 		.value("Trailing", ImGuiTabItemFlags_Trailing)
+		.export_values();
+
+	py::enum_<ImGuiSelectableFlags_>(m, "Selectable", py::arithmetic())
+		.value("Empty", ImGuiSelectableFlags_None)
+		.value("DontClosePopups", ImGuiSelectableFlags_DontClosePopups)
+		.value("SpanAllColumns", ImGuiSelectableFlags_SpanAllColumns)
+		.value("AllowDoubleClick", ImGuiSelectableFlags_AllowDoubleClick)
+		.value("Disabled", ImGuiSelectableFlags_Disabled)
+		.value("AllowItemOverlap", ImGuiSelectableFlags_AllowItemOverlap)
 		.export_values();
 
 	py::class_<Bool>(m, "Bool")
