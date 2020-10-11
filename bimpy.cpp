@@ -971,6 +971,24 @@ PYBIND11_MODULE(_bimpy, m) {
 		.value("AllowItemOverlap", ImGuiSelectableFlags_AllowItemOverlap)
 		.export_values();
 
+	py::enum_<ImGuiTreeNodeFlags_>(m, "TreeNode", py::arithmetic())
+		.value("Empty", ImGuiTreeNodeFlags_None)
+		.value("Selected", ImGuiTreeNodeFlags_Selected)
+		.value("Framed", ImGuiTreeNodeFlags_Framed)
+		.value("AllowItemOverlap", ImGuiTreeNodeFlags_AllowItemOverlap)
+		.value("NoTreePushOnOpen", ImGuiTreeNodeFlags_NoTreePushOnOpen)
+		.value("NoAutoOpenOnLog", ImGuiTreeNodeFlags_NoAutoOpenOnLog)
+		.value("DefaultOpen", ImGuiTreeNodeFlags_DefaultOpen)
+		.value("OpenOnDoubleClick", ImGuiTreeNodeFlags_OpenOnDoubleClick)
+		.value("OpenOnArrow", ImGuiTreeNodeFlags_OpenOnArrow)
+		.value("Leaf", ImGuiTreeNodeFlags_Leaf)
+		.value("Bullet", ImGuiTreeNodeFlags_Bullet)
+		.value("FramePadding", ImGuiTreeNodeFlags_FramePadding)
+		.value("SpanAvailWidth", ImGuiTreeNodeFlags_SpanAvailWidth)
+		.value("SpanFullWidth", ImGuiTreeNodeFlags_SpanFullWidth)
+		.value("NavLeftJumpsBackHere", ImGuiTreeNodeFlags_NavLeftJumpsBackHere)
+		.export_values();
+
 	py::class_<Bool>(m, "Bool")
 		.def(py::init())
 		.def(py::init<bool>())
@@ -1818,6 +1836,8 @@ PYBIND11_MODULE(_bimpy, m) {
 	m.def("push_clip_rect", &ImGui::PushClipRect);
 	m.def("pop_clip_rect", &ImGui::PopClipRect);
 
+	m.def("color", [](int r, int g, int b, int a) { return IM_COL32(r, g, b, a); }, py::arg("r"), py::arg("g"), py::arg("b"), py::arg("a"));
+	m.def("get_color", [](ImGuiCol colorEnum, float alpha_multiplier) { return ImGui::GetColorU32(colorEnum, alpha_multiplier); }, py::arg("colorEnum"), py::arg("alpha_multiplier") = 1);
 	m.def("add_line", &AddLine, py::arg("a"), py::arg("b"), py::arg("col"), py::arg("thickness") = 1.0f);
 	m.def("add_rect", &AddRect, py::arg("a"), py::arg("b"), py::arg("col"), py::arg("rounding") = 0.0f, py::arg("rounding_corners_flags") = ImDrawCornerFlags_All, py::arg("thickness") = 1.0f);
 	m.def("add_rect_filled", &AddRectFilled, py::arg("a"), py::arg("b"), py::arg("col"), py::arg("rounding") = 0.0f, py::arg("rounding_corners_flags") = ImDrawCornerFlags_All);
