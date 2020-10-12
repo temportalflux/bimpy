@@ -87,6 +87,7 @@ void Context::Init(int width, int height, const std::string& name)
 
 		ImGuiIO& io = ImGui::GetIO();
 		io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
+		// io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable; // causes issues with next_next_window_pos
 		io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
 		io.KeyMap[ImGuiKey_Tab] = GLFW_KEY_TAB;
 		io.KeyMap[ImGuiKey_LeftArrow] = GLFW_KEY_LEFT;
@@ -1255,8 +1256,22 @@ PYBIND11_MODULE(_bimpy, m) {
 	m.def("get_window_content_region_width", &ImGui::GetWindowContentRegionWidth);
 	// m.def("get_window_font_size", &ImGui::GetWindowFontSize);
 	m.def("get_font_size", &ImGui::GetFontSize);
-	m.def("get_viewport_pos", []() { return ImGui::GetMainViewport()->GetWorkPos(); });
-	m.def("get_viewport_size", []() { return ImGui::GetMainViewport()->GetWorkSize(); });
+	m.def("get_main_viewport_pos", []() {
+		auto* viewport = ImGui::GetMainViewport();
+		return viewport ? viewport->GetWorkPos() : ImVec2(0, 0);
+	});
+	m.def("get_main_viewport_size", []() {
+		auto* viewport = ImGui::GetMainViewport();
+		return viewport ? viewport->GetWorkSize() : ImVec2(0, 0);
+	});
+	m.def("get_window_viewport_pos", []() {
+		auto* viewport = ImGui::GetWindowViewport();
+		return viewport ? viewport->GetWorkPos() : ImVec2(0, 0);
+	});
+	m.def("get_window_viewport_size", []() {
+		auto* viewport = ImGui::GetWindowViewport();
+		return viewport ? viewport->GetWorkSize() : ImVec2(0, 0);
+	});
 	m.def("set_window_font_scale", &ImGui::SetWindowFontScale);
 	m.def("get_window_pos", &ImGui::GetWindowPos);
 	m.def("get_window_size", &ImGui::GetWindowSize);
