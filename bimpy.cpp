@@ -1756,6 +1756,12 @@ PYBIND11_MODULE(_bimpy, m) {
 
 	m.def("get_time", &ImGui::GetTime);
 	m.def("get_frame_count", &ImGui::GetFrameCount);
+	
+	py::enum_<ImGuiMouseButton_>(m, "MouseButton")
+		.value("Left", ImGuiMouseButton_Left)
+		.value("Right", ImGuiMouseButton_Right)
+		.value("Middle", ImGuiMouseButton_Middle)
+		.export_values();
 
 	m.def(
 		"is_key_down",
@@ -1927,5 +1933,8 @@ PYBIND11_MODULE(_bimpy, m) {
 	m.def("end_tab_item", &ImGui::EndTabItem);
 	m.def("tab_item_button", &ImGui::TabItemButton, py::arg("label"), py::arg("flags") = ImGuiTabItemFlags_(0));
 	m.def("set_tab_item_closed", &ImGui::SetTabItemClosed, py::arg("label"));
+
+	m.def("get_clipboard_text", []() -> String { return String(std::string(ImGui::GetClipboardText())); });
+	m.def("set_clipboard_text", [](const std::string& text) { ImGui::SetClipboardText(text.c_str()); }, py::arg("text"));
 
 }
