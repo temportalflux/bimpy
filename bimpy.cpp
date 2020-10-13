@@ -774,7 +774,7 @@ PYBIND11_MODULE(_bimpy, m) {
 			.export_values();
 
 		py::enum_<ImGuiHoveredFlags_>(m,"HoveredFlags")
-			.value("None",ImGuiHoveredFlags_None)
+			.value("Current",ImGuiHoveredFlags_None)
 			.value("ChildWindows",ImGuiHoveredFlags_ChildWindows)
 			.value("RootWindow",ImGuiHoveredFlags_RootWindow)
 			.value("AnyWindow",ImGuiHoveredFlags_AnyWindow)
