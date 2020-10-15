@@ -1411,14 +1411,14 @@ PYBIND11_MODULE(_bimpy, m) {
 		}
 	});
 
-	m.def("input_text", [](const char* label, String& text, size_t buf_size, ImGuiInputTextFlags flags)
+	m.def("input_text", [](const char* label, String& text, size_t buf_size, const char* hint, ImGuiInputTextFlags flags)
 	{
 		bool result = false;
 		if (buf_size > 255)
 		{
 			char* buff = new char[buf_size + 1];
 			strncpy(buff, text.value.c_str(), buf_size);
-			result = ImGui::InputText(label, buff, buf_size, flags);
+			result = ImGui::InputTextWithHint(label, hint, buff, buf_size, flags);
 			if (result)
 			{
 				text.value = buff;
@@ -1429,14 +1429,14 @@ PYBIND11_MODULE(_bimpy, m) {
 		{
 			char buff[256];
 			strncpy(buff, text.value.c_str(), 255);
-			result = ImGui::InputText(label, buff, buf_size, flags);
+			result = ImGui::InputTextWithHint(label, hint, buff, buf_size, flags);
 			if (result)
 			{
 				text.value = buff;
 			}
 		}
 		return result;
-	}, py::arg("label"), py::arg("text"), py::arg("buf_size"), py::arg("flags") = 0);
+	}, py::arg("label"), py::arg("text"), py::arg("buf_size"), py::arg("hint") = "", py::arg("flags") = 0);
 	m.def("input_text_multiline", [](const char* label, String& text, size_t buf_size, const ImVec2& size, ImGuiInputTextFlags flags)
 	{
 		bool result = false;
