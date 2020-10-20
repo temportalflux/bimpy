@@ -953,6 +953,7 @@ PYBIND11_MODULE(_bimpy, m) {
 		.export_values();
 
 	py::enum_<ImGuiTabItemFlags_>(m, "TabItem", py::arithmetic())
+		.value("Empty", ImGuiTabItemFlags_None)
 		.value("UnsavedDocument", ImGuiTabItemFlags_UnsavedDocument)
 		.value("SetSelected", ImGuiTabItemFlags_SetSelected)
 		.value("NoCloseWithMiddleMouseButton", ImGuiTabItemFlags_NoCloseWithMiddleMouseButton)
